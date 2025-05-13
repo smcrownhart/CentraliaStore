@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using CentraliaStore.Models;
 
 namespace CentraliaStore.Data
 {
@@ -9,5 +10,6 @@ namespace CentraliaStore.Data
             : base(options)
         {
         }
+        public DbSet<CentraliaStore.Models.Role> Role { get; set; } = default!;
     }
 }
