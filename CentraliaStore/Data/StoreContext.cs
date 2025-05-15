@@ -2,21 +2,118 @@
 using Microsoft.EntityFrameworkCore;
 using CentraliaStore.Models;
 using CentraliaStore.Areas.Identity;
+using System.Reflection.Metadata;
+using Microsoft.AspNetCore.Identity;
+using System.Configuration;
+using System.Collections.Generic;
 
 namespace CentraliaStore.Data
 {
     public class StoreContext : IdentityDbContext
     {
-        public StoreContext(DbContextOptions<StoreContext> options)
+        private readonly IConfiguration Configuration;
+
+        public StoreContext(DbContextOptions<StoreContext> options, IConfiguration configuration)
             : base(options)
         {
+            Configuration = configuration;
         }
 
         // dynamic seeded data and configuration goes here
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            base.OnConfiguring(optionsBuilder);
-        }
+            => optionsBuilder
+                .UseSeeding((context, _) =>
+                {
+                    // checking for a value in the database
+                    var admin = context.Set<AppUser>().FirstOrDefault(u => u.UserName == Configuration["Accounts:AdminEmail"]);
+
+                    var hasher = new PasswordHasher<AppUser>();
+
+                    // if the value doesnt exist, go ahead and add it
+                    if (admin == null)
+                    {
+                        // add a user
+                        context.Set<AppUser>().Add(new AppUser
+                        {
+                            // add properties to specify the app user
+                            UserName = Configuration["Accounts:AdminEmail"],
+                            NormalizedUserName = Configuration["Accounts:AdminEmail"].ToUpper(),
+                            Email = Configuration["Accounts:AdminEmail"],
+                            NormalizedEmail = Configuration["Accounts:AdminEmail"].ToUpper(),
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            SecurityStamp = Guid.NewGuid().ToString(),
+                            PasswordHash = hasher.HashPassword(null, Configuration["Accounts:AdminPassword"])
+                        });
+                        context.SaveChanges();
+                    }
+
+                    var user = context.Set<AppUser>().FirstOrDefault(u => u.UserName == Configuration["Accounts:TestUserEmail"]);
+
+                    if (user == null)
+                    {
+                        // add a user
+                        context.Set<AppUser>().Add(new AppUser
+                        {
+                            // add properties to specify the app user
+                            UserName = Configuration["Accounts:TestUserEmail"],
+                            NormalizedUserName = Configuration["Accounts:TestUserEmail"].ToUpper(),
+                            Email = Configuration["Accounts:TestUserEmail"],
+                            NormalizedEmail = Configuration["Accounts:TestUserEmail"].ToUpper(),
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            SecurityStamp = Guid.NewGuid().ToString(),
+                            PasswordHash = hasher.HashPassword(null, Configuration["Accounts:TestUserPassword"])
+                        });
+                        context.SaveChanges();
+                    }
+                })
+                .UseAsyncSeeding(async (context, _, cancellationToken) =>
+                {
+                    // checking for a value in the database
+                    var admin = await context.Set<AppUser>().FirstOrDefaultAsync(u => u.UserName == Configuration["Accounts:AdminEmail"]);
+                    
+                    var hasher = new PasswordHasher<AppUser>();
+
+                    // if the value doesnt exist, go ahead and add it
+                    if (admin == null)
+                    {
+                        context.Set<AppUser>().Add(new AppUser
+                        {
+                            // add properties to specify the app user
+                            UserName = Configuration["Accounts:AdminEmail"],
+                            NormalizedUserName = Configuration["Accounts:AdminEmail"].ToUpper(),
+                            Email = Configuration["Accounts:AdminEmail"],
+                            NormalizedEmail = Configuration["Accounts:AdminEmail"].ToUpper(),
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            SecurityStamp = Guid.NewGuid().ToString(),
+                            PasswordHash = hasher.HashPassword(null, Configuration["Accounts:AdminPassword"])
+                        });
+                        await context.SaveChangesAsync(cancellationToken);
+
+                    }
+
+                    var user = await context.Set<AppUser>().FirstOrDefaultAsync(u => u.UserName == Configuration["Accounts:TestUserEmail"]);
+
+                    if (user == null)
+                    {
+                        // add a user
+                        context.Set<AppUser>().Add(new AppUser
+                        {
+                            // add properties to specify the app user
+                            UserName = Configuration["Accounts:TestUserEmail"],
+                            NormalizedUserName = Configuration["Accounts:TestUserEmail"].ToUpper(),
+                            Email = Configuration["Accounts:TestUserEmail"],
+                            NormalizedEmail = Configuration["Accounts:TestUserEmail"].ToUpper(),
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            SecurityStamp = Guid.NewGuid().ToString(),
+                            PasswordHash = hasher.HashPassword(null, Configuration["Accounts:TestUserPassword"])
+                        });
+                        await context.SaveChangesAsync(cancellationToken);
+                    }
+                });
 
         // static seeded data and model setup goes in this method
         protected override void OnModelCreating(ModelBuilder builder)
