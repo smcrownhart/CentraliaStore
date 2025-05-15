@@ -4,6 +4,7 @@ using CentraliaStore.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CentraliaStore.Data.Migrations
 {
     [DbContext(typeof(StoreContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250514180725_InitialModels")]
+    partial class InitialModels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -78,28 +81,6 @@ namespace CentraliaStore.Data.Migrations
                     b.HasKey("CategoryId");
 
                     b.ToTable("Categories");
-
-                    b.HasData(
-                        new
-                        {
-                            CategoryId = 1,
-                            Name = "Sweatshirts"
-                        },
-                        new
-                        {
-                            CategoryId = 2,
-                            Name = "Water Bottles"
-                        },
-                        new
-                        {
-                            CategoryId = 3,
-                            Name = "Notebooks"
-                        },
-                        new
-                        {
-                            CategoryId = 4,
-                            Name = "Textbooks"
-                        });
                 });
 
             modelBuilder.Entity("CentraliaStore.Models.Order", b =>
