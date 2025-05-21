@@ -1,0 +1,1 @@
+CentraliaStore Configuration Information
