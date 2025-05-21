@@ -2,7 +2,46 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container-fluid p-5 text-center bg-primary text-white">
+    <h1 class="display-4 fw-bold">Welcome to Blazer Bill's Bookstore    <img src="<img src="wwwroot\images\blazerBill.jpg" alt="Logo" style="height: 20px; vertical-align: middle;" /></h1>
+    <p class="lead">Your official source for college books, merch, and magic.</p>
+    <a class="btn btn-light btn-lg mt-3" asp-area="Identity" asp-page="/Account/Register">Join Bill's Gang</a>
+</div>
+
+<!-- Featured Sections -->
+<div class="container mt-5">
+    <div class="row text-center">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow border-0">
+                <img src="https://source.unsplash.com/featured/?books" class="card-img-top" alt="Books">
+                <div class="card-body">
+                    <h5 class="card-title">Books</h5>
+                    <p class="card-text">Browse new, used, and digital textbooks. Blazers read smart.</p>
+                    <a href="#" class="btn btn-outline-primary">Browse Books</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow border-0">
+                <img src="https://source.unsplash.com/featured/?merchandise" class="card-img-top" alt="Merch">
+                <div class="card-body">
+                    <h5 class="card-title">Merch & Apparel</h5>
+                    <p class="card-text">Rep your college in style—hoodies, mugs, and more!</p>
+                    <a href="#" class="btn btn-outline-primary">Shop Merch</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow border-0">
+                <img src="https://source.unsplash.com/featured/?discount" class="card-img-top" alt="Supplies">
+                <div class="card-body">
+                    <h5 class="card-title">Supplies</h5>
+                    <p class="card-text">Get Your Student Supplies Here.</p>
+                    <a href="#" class="btn btn-outline-primary">See Supplies</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
