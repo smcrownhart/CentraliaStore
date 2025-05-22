@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 namespace CentraliaStore.Data
 {
-    public class StoreContext : IdentityDbContext
+    public class StoreContext : IdentityDbContext<AppUser>
     {
         private readonly IConfiguration Configuration;
 
@@ -220,6 +220,6 @@ namespace CentraliaStore.Data
 
         public DbSet<AppUser> Users { get; set; }
 
-        public DbSet<AppRole> Roles { get; set; } = default!;
+        public DbSet<IdentityRole> Roles { get; set; } = default!;
     }
 }

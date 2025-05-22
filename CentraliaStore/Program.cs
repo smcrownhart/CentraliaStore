@@ -18,7 +18,7 @@ namespace CentraliaStore
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
             builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddRoles<AppRole>()
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<StoreContext>();
             builder.Services.AddControllersWithViews();
 
