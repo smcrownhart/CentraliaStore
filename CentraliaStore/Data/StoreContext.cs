@@ -212,7 +212,6 @@ namespace CentraliaStore.Data
             );
         }
 
-        public DbSet<Role> Role { get; set; } = default!;
         public DbSet<Address> Addresses { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Order> Orders { get; set; }
@@ -220,5 +219,7 @@ namespace CentraliaStore.Data
         public DbSet<Product> Products { get; set; }
 
         public DbSet<AppUser> Users { get; set; }
+
+        public DbSet<AppRole> Roles { get; set; } = default!;
     }
 }
