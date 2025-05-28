@@ -1,1 +1,1 @@
-CentraliaStore Configuration Information
+CentraliaStore Configuration Information Needs Updating
