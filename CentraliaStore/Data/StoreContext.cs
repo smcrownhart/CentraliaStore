@@ -130,22 +130,14 @@ namespace CentraliaStore.Data
 
             // added seed data for products for shopping view
             builder.Entity<Product>().HasData(
-  new Product { ProductId = 1, Name = "Logo Hoodie", Description = "Warm and comfortable", CategoryId = 1 },
-  new Product { ProductId = 2, Name = "Steel Water Bottle", Description = "Keeps drinks cold", CategoryId = 2 },
-  new Product { ProductId = 3, Name = "Color Changing Notebook", Description = "150 pages", CategoryId = 3 },
-  new Product { ProductId = 4, Name = " c# Textbook", Description = "Intro to c#", CategoryId = 4 });
+                new Product { ProductId = 1, Name = "Logo Hoodie", Description = "Warm and comfortable", CategoryId = 1 },
+                new Product { ProductId = 2, Name = "Steel Water Bottle", Description = "Keeps drinks cold", CategoryId = 2 },
+                new Product { ProductId = 3, Name = "Color Changing Notebook", Description = "150 pages", CategoryId = 3 },
+                new Product { ProductId = 4, Name = " c# Textbook", Description = "Intro to c#", CategoryId = 4 }
+            );
         }
 
         
-
-
-
-
-
-
-
-
-
 
 
         public DbSet<Role> Role { get; set; } = default!;
