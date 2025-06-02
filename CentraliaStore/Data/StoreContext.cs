@@ -122,10 +122,10 @@ namespace CentraliaStore.Data
 
             // add categories
             builder.Entity<Category>().HasData(
-                new Category { CategoryId = 1, Name = "Sweatshirts" },
-                new Category { CategoryId = 2, Name = "Water Bottles" },
-                new Category { CategoryId = 3, Name = "Notebooks" },
-                new Category { CategoryId = 4, Name = "Textbooks" }
+            new Category { CategoryId = 1, Name = "Sweatshirts" },
+            new Category { CategoryId = 2, Name = "Water Bottles" },
+            new Category { CategoryId = 3, Name = "Notebooks" },
+            new Category { CategoryId = 4, Name = "Textbooks" }
             );
         }
 
