@@ -1,5 +1,7 @@
 using CentraliaStore.Areas.Identity;
 using CentraliaStore.Data;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,10 +23,15 @@ namespace CentraliaStore
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<StoreContext>();
             builder.Services.AddControllersWithViews();
-
+            
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                AdminSeeder.SeedAdminUser(services).GetAwaiter().GetResult();
+            }
+            
             if (app.Environment.IsDevelopment())
             {
                 app.UseMigrationsEndPoint();
@@ -32,7 +39,6 @@ namespace CentraliaStore
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 
@@ -49,6 +55,7 @@ namespace CentraliaStore
             app.MapRazorPages()
                .WithStaticAssets();
 
+           
             app.Run();
         }
     }
