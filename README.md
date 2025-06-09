@@ -1,82 +1,61 @@
-********************************* CentraliaStore Configuration Information *********************************
+# CentraliaStore Configuration Information
 
-Clone the CentraliaStore project from GitHub using Visual Studio.
+## Instructions
+- Clone the CentraliaStore project from GitHub using Visual Studio.
+- Create a fork of the repository on GitHub:
+- Navigate to the CentraliaStore repo.
+- Click "Fork" (top-right).
+- Make sure you're based on the development branch. (See Note Below)
+- In Visual Studio, create a new branch off of your fork (e.g., feature/my-update).
 
+> 
+> ⚠️ In Visual Studio, unclick "Clone only the master branch" so all branches are available.
+> 
 
-Create a fork of the repository on GitHub:
-
-
-Navigate to the CentraliaStore repo.
-
-
-Click "Fork" (top-right).
-
-
-Make sure you're based on the development branch.
-
-
-⚠️ In Visual Studio, unclick "Clone only the master branch" so all branches are available.
-
-
-In Visual Studio, create a new branch off of your fork (e.g., feature/my-update).
-
-
-Right-click on the CentraliaStore project in Solution Explorer → Click "Manage User Secrets".
-
-
+## Seeding the Admin
 Paste the following JSON into the secrets.json file:
 
-
+```json
 {
   "Accounts:AdminEmail": "admin@centraliastore.com",
   "Accounts:AdminPassword": "Admin123!",
   "Accounts:TestUserEmail": "test@centraliastore.com",
   "Accounts:TestUserPassword": "Test123!"
 }
+```
 
+## Seeding the Database
+- In the Package Manager Console, run:
 
-In the Package Manager Console, run:
-
+```console
 Update-Database
+```
 
-Make your changes:
+## Making Your Changes
 
+### Responding to Issues
+See this link for the [issue tracker](https://github.com/CCAppDevs/CentraliaStore/issues).
+- Select the issue
+- On your own fork resolve the issue
+  - Make sure your commit focuses on this issue.
+  - Make sure to mark your commit message with the following
 
+  ##### Example
+  > fix: Fixed a bug in seed data
+
+- Finish your code, and submit a pull request.
+
+### When Changing the Database
 If changes involve the database (e.g., seed data), run the following in your manage package console or terminal
 
-
+```console
 Add-Migration YourMigrationName
 Update-Database
+```
+
+- Make a commit
+- Push your changes to your fork on GitHub.
 
 
-Push your changes to your fork on GitHub.
-
-
-Create a Pull Request:
-
-
-Base: development (main repo)
-
-
-Compare: your branch (forked repo)
-
-
-🎉 You're all set!
-
-
-
-🔁 How to Make Future Changes to an Existing Fork
-Create a new branch in your existing fork for each new change (don’t reuse old branches).
-
-
-Repeat Steps 4–5 (reconfigure user secrets if needed).
-
-
-Make your changes.
-
-
-If changes affect the database, repeat:
-
-Add-Migration YourMigrationName
-Update-Database
- Then push and create a new pull request.
+### Creating a Pull Request
+Ensure all code entering the repository is comparing your fork to the development branch. All code missing this requirement will be denied until fixed.
