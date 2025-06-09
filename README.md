@@ -80,7 +80,3 @@ If changes affect the database, repeat:
 Add-Migration YourMigrationName
 Update-Database
  Then push and create a new pull request.
-
-
-
-
