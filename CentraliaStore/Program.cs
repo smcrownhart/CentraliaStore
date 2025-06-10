@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using CentraliaStore.Infrastructure;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CentraliaStore
 {
@@ -22,6 +24,16 @@ namespace CentraliaStore
             builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<StoreContext>();
+
+            // add a same user edit policy
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("EditPolicy", policy => policy.Requirements.Add(new SameAuthorRequirement()));
+            });
+
+            // adding the service to check the policy
+            builder.Services.AddSingleton<IAuthorizationHandler, DocumentAuthorizationHandler>();
+
             builder.Services.AddControllersWithViews();
             
             var app = builder.Build();

@@ -7,21 +7,35 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CentraliaStore.Data;
 using CentraliaStore.Models;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
+using CentraliaStore.Areas.Identity;
 
 namespace CentraliaStore.Controllers
 {
+    [Authorize]
     public class ApiKeysController : Controller
     {
         private readonly StoreContext _context;
+        private readonly UserManager<AppUser> _userManager;
+        private readonly IAuthorizationService _authorizationService;
 
-        public ApiKeysController(StoreContext context)
+        public ApiKeysController(
+            StoreContext context,
+            UserManager<AppUser> usr,
+            IAuthorizationService authorizationService
+            )
         {
             _context = context;
+            _userManager = usr;
+            _authorizationService = authorizationService;
         }
 
         // GET: ApiKeys
         public async Task<IActionResult> Index()
         {
+            // .Where(k => k.AppUserId == User.FindFirstValue(ClaimTypes.NameIdentifier)
             var storeContext = _context.ApiKeys.Include(a => a.AppUser);
             return View(await storeContext.ToListAsync());
         }
@@ -82,8 +96,23 @@ namespace CentraliaStore.Controllers
             {
                 return NotFound();
             }
-            ViewData["AppUserId"] = new SelectList(_context.Users, "Id", "Id", apiKey.AppUserId);
-            return View(apiKey);
+
+            var authorizationResult = await _authorizationService
+            .AuthorizeAsync(User, apiKey, "EditPolicy");
+
+            if (authorizationResult.Succeeded)
+            {
+                ViewData["AppUserId"] = new SelectList(_context.Users, "Id", "Id", apiKey.AppUserId);
+                return View(apiKey);
+            }
+            else if (User.Identity.IsAuthenticated)
+            {
+                return new ForbidResult();
+            }
+            else
+            {
+                return new ChallengeResult();
+            }
         }
 
         // POST: ApiKeys/Edit/5
