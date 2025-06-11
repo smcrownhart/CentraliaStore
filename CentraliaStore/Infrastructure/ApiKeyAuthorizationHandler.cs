@@ -1,9 +1,10 @@
 ﻿using CentraliaStore.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 
 namespace CentraliaStore.Infrastructure
 {
-    public class DocumentAuthorizationHandler :
+    public class ApiKeyAuthorizationHandler :
     AuthorizationHandler<SameAuthorRequirement, ApiKey>
     {
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context,

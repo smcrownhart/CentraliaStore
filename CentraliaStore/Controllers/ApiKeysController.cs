@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using CentraliaStore.Areas.Identity;
+using static CentraliaStore.Infrastructure.ApiKeyAuthorizationCrudHandler;
 
 namespace CentraliaStore.Controllers
 {
@@ -36,8 +37,9 @@ namespace CentraliaStore.Controllers
         public async Task<IActionResult> Index()
         {
             // .Where(k => k.AppUserId == User.FindFirstValue(ClaimTypes.NameIdentifier)
-            var storeContext = _context.ApiKeys.Include(a => a.AppUser);
-            return View(await storeContext.ToListAsync());
+
+            var keys = _context.ApiKeys.Include(a => a.AppUser).Where(k => k.AppUser.UserName == User.Identity.Name || User.IsInRole("Administrator"));
+            return View(await keys.ToListAsync());
         }
 
         // GET: ApiKeys/Details/5
@@ -51,12 +53,27 @@ namespace CentraliaStore.Controllers
             var apiKey = await _context.ApiKeys
                 .Include(a => a.AppUser)
                 .FirstOrDefaultAsync(m => m.ApiKeyId == id);
+
             if (apiKey == null)
             {
                 return NotFound();
             }
 
-            return View(apiKey);
+            var authorizationResult = await _authorizationService
+            .AuthorizeAsync(User, apiKey, Operations.Read);
+
+            if (authorizationResult.Succeeded)
+            {
+                return View(apiKey);
+            }
+            else if (User.Identity.IsAuthenticated)
+            {
+                return new ForbidResult();
+            }
+            else
+            {
+                return new ChallengeResult();
+            }
         }
 
         // GET: ApiKeys/Create
@@ -127,28 +144,42 @@ namespace CentraliaStore.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            var authorizationResult = await _authorizationService
+            .AuthorizeAsync(User, apiKey, "EditPolicy");
+
+            if (authorizationResult.Succeeded)
             {
-                try
+                if (ModelState.IsValid)
                 {
-                    _context.Update(apiKey);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ApiKeyExists(apiKey.ApiKeyId))
+                    try
                     {
-                        return NotFound();
+                        _context.Update(apiKey);
+                        await _context.SaveChangesAsync();
                     }
-                    else
+                    catch (DbUpdateConcurrencyException)
                     {
-                        throw;
+                        if (!ApiKeyExists(apiKey.ApiKeyId))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
                     }
+                    return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
+                ViewData["AppUserId"] = new SelectList(_context.Users, "Id", "Id", apiKey.AppUserId);
+                return View(apiKey);
             }
-            ViewData["AppUserId"] = new SelectList(_context.Users, "Id", "Id", apiKey.AppUserId);
-            return View(apiKey);
+            else if (User.Identity.IsAuthenticated)
+            {
+                return new ForbidResult();
+            }
+            else
+            {
+                return new ChallengeResult();
+            }
         }
 
         // GET: ApiKeys/Delete/5

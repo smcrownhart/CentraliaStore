@@ -32,7 +32,10 @@ namespace CentraliaStore
             });
 
             // adding the service to check the policy
-            builder.Services.AddSingleton<IAuthorizationHandler, DocumentAuthorizationHandler>();
+            builder.Services.AddSingleton<IAuthorizationHandler, ApiKeyAuthorizationHandler>();
+
+            // crud api key handler
+            builder.Services.AddSingleton<IAuthorizationHandler, ApiKeyAuthorizationCrudHandler>();
 
             builder.Services.AddControllersWithViews();
             
