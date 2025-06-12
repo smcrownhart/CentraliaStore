@@ -13,9 +13,7 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="ApiSecret" class="control-label"></label>
-                <input asp-for="ApiSecret" class="form-control" />
-                <span asp-validation-for="ApiSecret" class="text-danger"></span>
+                <label>Generate a new api key?</label>
             </div>
             <div class="form-group">
                 <label asp-for="AppUserId" class="control-label"></label>

@@ -36,8 +36,6 @@ namespace CentraliaStore.Controllers
         // GET: ApiKeys
         public async Task<IActionResult> Index()
         {
-            // .Where(k => k.AppUserId == User.FindFirstValue(ClaimTypes.NameIdentifier)
-
             var keys = _context.ApiKeys.Include(a => a.AppUser).Where(k => k.AppUser.UserName == User.Identity.Name || User.IsInRole("Administrator"));
             return View(await keys.ToListAsync());
         }
@@ -79,7 +77,14 @@ namespace CentraliaStore.Controllers
         // GET: ApiKeys/Create
         public IActionResult Create()
         {
-            ViewData["AppUserId"] = new SelectList(_context.Users, "Id", "Id");
+            if (!User.IsInRole("Administrator"))
+            {
+                ViewData["AppUserId"] = new SelectList(_context.Users.Where(u => u.UserName == User.Identity.Name), "Id", "Id");
+            } else
+            {
+                ViewData["AppUserId"] = new SelectList(_context.Users, "Id", "Id");
+            }
+
             return View();
         }
 
@@ -88,16 +93,34 @@ namespace CentraliaStore.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ApiKeyId,ApiSecret,AppUserId")] ApiKey apiKey)
+        public async Task<IActionResult> Create([Bind("AppUserId")] string appUserId)
         {
-            if (ModelState.IsValid)
+            ApiKey apiKey;
+
+            if (!User.IsInRole("Administrator"))
             {
-                _context.Add(apiKey);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                apiKey = new ApiKey
+                {
+                    ApiKeyId = 0,
+                    ApiSecret = Guid.NewGuid().ToString(),
+                    AppUserId = User.FindFirstValue(ClaimTypes.NameIdentifier)
+                };
             }
-            ViewData["AppUserId"] = new SelectList(_context.Users, "Id", "Id", apiKey.AppUserId);
-            return View(apiKey);
+            else
+            {
+                // Is admin, let do it all
+                apiKey = new ApiKey
+                {
+                    ApiKeyId = 0,
+                    ApiSecret = Guid.NewGuid().ToString(),
+                    AppUserId = appUserId
+                };
+            }
+
+
+            _context.Add(apiKey);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: ApiKeys/Edit/5
@@ -185,6 +208,7 @@ namespace CentraliaStore.Controllers
         // GET: ApiKeys/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
+            // TODO: Add delete functionality for only admins
             if (id == null)
             {
                 return NotFound();
@@ -206,6 +230,7 @@ namespace CentraliaStore.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            // TODO: Add delete functionality for only admins
             var apiKey = await _context.ApiKeys.FindAsync(id);
             if (apiKey != null)
             {
