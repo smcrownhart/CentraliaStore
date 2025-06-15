@@ -14,6 +14,7 @@ namespace CentraliaStore.Infrastructure
             // admins can do whatever
             if (context.User.IsInRole("Administrator"))
             {
+               
                 context.Succeed(requirement);
             }
 
@@ -39,6 +40,13 @@ namespace CentraliaStore.Infrastructure
             }
 
             // delete is left missing, only admins can delete
+
+            //TODO: If you want to allow users to delete their own API keys, uncomment the following code
+            //if (context.User.Identity?.Name == resource.AppUser.UserName &&
+            //    requirement.Name == Operations.Delete.Name)
+            //{
+            //    context.Succeed(requirement);
+            //}
 
             return Task.CompletedTask;
         }

@@ -208,7 +208,7 @@ namespace CentraliaStore.Controllers
         // GET: ApiKeys/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            // TODO: Add delete functionality for only admins
+            
             if (id == null)
             {
                 return NotFound();
@@ -222,6 +222,21 @@ namespace CentraliaStore.Controllers
                 return NotFound();
             }
 
+            var authorizationResult = await _authorizationService
+                .AuthorizeAsync(User, apiKey, Operations.Delete);
+
+            if (authorizationResult.Succeeded)
+            {
+                return View(apiKey);
+            }else if (User.Identity.IsAuthenticated)
+            {
+                return new ForbidResult();
+            }
+            else
+            {
+                return new ChallengeResult();
+            }
+
             return View(apiKey);
         }
 
@@ -232,9 +247,31 @@ namespace CentraliaStore.Controllers
         {
             // TODO: Add delete functionality for only admins
             var apiKey = await _context.ApiKeys.FindAsync(id);
-            if (apiKey != null)
+            if (apiKey == null)
+            {
+                return NotFound();
+            }
+            var authorizationResult = await _authorizationService
+                .AuthorizeAsync(User, apiKey, Operations.Delete);
+            //if (apiKey != null)
+            //{
+            //    _context.ApiKeys.Remove(apiKey);
+            //}
+
+            if (authorizationResult.Succeeded)
             {
                 _context.ApiKeys.Remove(apiKey);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+               
+            }
+            else if (User.Identity.IsAuthenticated)
+            {
+                return new ForbidResult();
+            }
+            else
+            {
+                return new ChallengeResult();
             }
 
             await _context.SaveChangesAsync();

@@ -11,6 +11,11 @@ namespace CentraliaStore.Infrastructure
                                                        SameAuthorRequirement requirement,
                                                        ApiKey resource)
         {
+            if(context.User.IsInRole("Administrator"))
+            {
+                context.Succeed(requirement);
+            }
+
             if (context.User.Identity?.Name == resource.AppUser.UserName)
             {
                 context.Succeed(requirement);
